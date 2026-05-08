@@ -8,7 +8,7 @@ const auth = new google.auth.GoogleAuth({
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
-bot.start((ctx) => ctx.reply("Добрый день! Для регистрации заявки в систему, пожалуйста, напишите ваше имя и контактный телефон."));
+bot.start((ctx) => ctx.reply("Добрый день! Вас приветствует компания Agro Lead. Для регистрации заявки в систему, пожалуйста, напишите ваше имя и контактный телефон в удобном для вас формате."));
 
 bot.on('text', async (ctx) => {
     const sheets = google.sheets({ version: 'v4', auth });
@@ -21,9 +21,9 @@ bot.on('text', async (ctx) => {
             valueInputOption: 'RAW',
             requestBody: { values: [row] },
         });
-        ctx.reply("✅ Ваша заявка зафиксирована в реестре Google Sheets. Менеджер свяжется с вами.");
+        ctx.reply("✅ Ваша заявка зафиксирована! Менеджер свяжется с вами в течении часа.");
     } catch (e) {
-        ctx.reply("❌ Ошибка записи. Проверьте доступ к таблице.");
+        ctx.reply("❌ Ошибка записи. Попробуйте ещё раз.");
     }
 });
 
