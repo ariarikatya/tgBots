@@ -24,7 +24,7 @@ async function getGigaToken() {
     return res.data.access_token;
 }
 
-bot.start((ctx) => ctx.reply("Привет! Пришли мне название товара или объекта и пару характеристик, а я сделаю описание для Ozon, Авито или Маркетплейса."));
+bot.start((ctx) => ctx.reply("Привет! Пришли мне название товара или объекта и пару характеристик, а я сделаю описание для Маркетплейса или сайта."));
 
 bot.on('text', async (ctx) => {
     const msg = await ctx.reply("🔄 GigaChat генерирует описание...");
@@ -44,7 +44,7 @@ bot.on('text', async (ctx) => {
 });
         await ctx.telegram.editMessageText(ctx.chat.id, msg.message_id, null, response.data.choices[0].message.content);
     } catch (e) {
-        await ctx.telegram.editMessageText(ctx.chat.id, msg.message_id, null, "Ошибка генерации. Проверьте API-ключи.");
+        await ctx.telegram.editMessageText(ctx.chat.id, msg.message_id, null, "Ошибка генерации. Попробуйте повторить запрос с другими данными.");
     }
 });
 
