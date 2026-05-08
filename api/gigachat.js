@@ -1,3 +1,4 @@
+const https = require('https'); // Добавь это в самый верх файла
 const { Telegraf } = require('telegraf');
 const axios = require('axios');
 const qs = require('qs');
@@ -15,7 +16,9 @@ async function getGigaToken() {
             'Authorization': `Basic ${process.env.GIGACHAT_CREDENTIALS}`,
             'RqUID': '6f0b1294-703d-4a14-831e-1516b03901fb'
         },
-        data: data
+        data: data,
+        // Добавляем игнорирование сертификатов (важно для работы со Сбером из-за рубежа)
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }) 
     };
     const res = await axios(config);
     return res.data.access_token;
@@ -28,7 +31,7 @@ bot.on('text', async (ctx) => {
     try {
         const token = await getGigaToken();
         const response = await axios.post('https://gigachat.devices.sberbank.ru/api/v1/chat/completions', {
-            model: 'GigaChat',
+    model: 'GigaChat',
             messages: [{ 
                 role: 'system', 
                 content: 'Ты эксперт по маркетплейсам. Напиши структурированный, продающий текст для товара или недвижимости. Используй буллиты и призыв к действию.' 
@@ -36,8 +39,9 @@ bot.on('text', async (ctx) => {
                 role: 'user', 
                 content: ctx.message.text 
             }]
-        }, { headers: { 'Authorization': `Bearer ${token}` } });
-
+        }, { headers: { 'Authorization': `Bearer ${token}` },
+    httpsAgent: new https.Agent({ rejectUnauthorized: false }) // И здесь тоже
+});
         await ctx.telegram.editMessageText(ctx.chat.id, msg.message_id, null, response.data.choices[0].message.content);
     } catch (e) {
         await ctx.telegram.editMessageText(ctx.chat.id, msg.message_id, null, "Ошибка генерации. Проверьте API-ключи.");
